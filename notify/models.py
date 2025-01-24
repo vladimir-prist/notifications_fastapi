@@ -4,6 +4,7 @@ from notify.database import Base
 
 
 class Notification(Base):
+    """ Модель уведомлений. """
     __tablename__ = "notifications"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -17,6 +18,7 @@ class Notification(Base):
 
 
 class NotificationLog(Base):
+    """ Модель логирования. """
     __tablename__ = "notification_logs"
 
     id = Column(Integer, primary_key=True, index=True)
