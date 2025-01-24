@@ -1,10 +1,3 @@
-redis-server
-redis-cli
-uvicorn notify.main:app --reload
-celery -A notify.tasks.celery worker --loglevel=info -P eventlet
-
-notifications_fastapi_bot
-
 # Сервис рассылки на FastAPI
 Данный сервис является частью микросервисной архитектуры, которая обеспечивает работу большого проекта в части 
 уведомлений пользователей на email или в telegram.
