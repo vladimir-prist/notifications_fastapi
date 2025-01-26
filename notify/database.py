@@ -1,7 +1,6 @@
 from pydantic.v1 import BaseSettings
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.orm import declarative_base
 import os
 from dotenv import load_dotenv
 from pydantic import ValidationError
@@ -11,6 +10,7 @@ load_dotenv()
 
 class Settings(BaseSettings):
     database_url: str = os.getenv("DATABASE_URL")
+    database_url_sqlalchemy: str = os.getenv("DATABASE_URL_SQLALCHEMY")
     EMAIL_HOST: str = os.getenv("EMAIL_HOST")
     EMAIL_PORT: int = os.getenv("EMAIL_PORT")
     EMAIL_USERNAME: str = os.getenv("EMAIL_USERNAME")
@@ -29,14 +29,17 @@ except ValidationError as e:
     exit(1)
 
 
-engine = create_engine(settings.database_url)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_async_engine(settings.database_url_sqlalchemy, echo=False)
+
+AsyncSessionLocal = async_sessionmaker(
+    bind=engine,
+    expire_on_commit=False,
+    autoflush=False
+)
+
 Base = declarative_base()
 
 
-def get_db():
-    db = SessionLocal()
-    try:
+async def get_db() -> AsyncSession:
+    async with AsyncSessionLocal() as db:
         yield db
-    finally:
-        db.close()
