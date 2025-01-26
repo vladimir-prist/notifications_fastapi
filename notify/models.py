@@ -1,6 +1,8 @@
+import enum
 from sqlalchemy import Column, Integer, String, Text, ForeignKey
 from sqlalchemy.orm import relationship
 from notify.database import Base
+from sqlalchemy.dialects.postgresql import ENUM as PgEnum
 
 
 class Notification(Base):
@@ -17,8 +19,14 @@ class Notification(Base):
     )
 
 
+class EnumStatus(enum.Enum):
+    SUCCESS = "SUCCESS"
+    FAILED = "FAILED"
+
+
 class NotificationLog(Base):
     """ Модель логирования. """
+
     __tablename__ = "notification_logs"
 
     id = Column(Integer, primary_key=True, index=True)
@@ -31,5 +39,5 @@ class NotificationLog(Base):
         "Notification",
         back_populates="notification_logs"
     )
-    status = Column(String(50), nullable=False) # SUCCESS/FAILED
+    status = Column(PgEnum(EnumStatus, name='enum_status', create_type=False), nullable=False)
     error_message = Column(Text)
