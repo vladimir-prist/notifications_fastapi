@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import Union, List
 
 
@@ -15,6 +15,4 @@ class NotificationOut(BaseModel):
     message_text: str
     recipient: str
     delay: int
-
-    class Config:
-        orm_mode = True  # Позволяет Pydantic преобразовывать ORM-объекты в схемы
+    model_config = ConfigDict(str_max_length=10)
